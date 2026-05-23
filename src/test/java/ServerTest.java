@@ -51,7 +51,6 @@ public class ServerTest {
             try {
                 Socket client = server.acceptConnection();
                 ConnectionHandler handler = new ConnectionHandler(client);
-                String request = handler.readRequest();
                 handler.sendResponse("HTTP/1.1 200 OK\r\n\r\nHello");
                 handler.close();
             } catch (IOException e) {
