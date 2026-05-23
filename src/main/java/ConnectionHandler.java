@@ -39,8 +39,12 @@ public class ConnectionHandler {
     }
 
     public void sendResponse(String response) throws IOException {
-        //
+        out.write(response);
     }
 
-    public void close() throws IOException {}
+    public void close() throws IOException {
+        socket.shutdownInput();
+        socket.shutdownOutput();
+        socket.close();
+    }
 }
