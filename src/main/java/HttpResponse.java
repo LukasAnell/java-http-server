@@ -40,7 +40,7 @@ public class HttpResponse {
         output.append("\r\n");
 
         // append headers to output in any order
-        for (Map.Entry<String, String> entry : getHeaders().entrySet()) {
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
             // get key and value separately
             String key = entry.getKey();
             String value = entry.getValue();
@@ -52,7 +52,7 @@ public class HttpResponse {
         // append newline regardless of whether or not there is a body
         output.append("\r\n");
 
-        output.append(getBody());
+        output.append(body);
 
         return output.toString();
     }
