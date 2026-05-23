@@ -30,8 +30,30 @@ public class HttpResponse {
     }
 
     public String serialize() {
-        // convert response to valid String
+        StringBuilder output = new StringBuilder("HTTP/1.1 ");
 
-        return null;
+        // response header line should be of the format:
+        // httpVersion code responseStr
+        output.append(status.getCode()).append(status.toString());
+
+        // append newline to end of each line
+        output.append("\r\n");
+
+        // append headers to output in any order
+        for (Map.Entry<String, String> entry : getHeaders().entrySet()) {
+            // get key and value separately
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            output.append(String.format("%s: %s", key, value));
+            output.append("\r\n");
+        }
+
+        // append newline regardless of whether or not there is a body
+        output.append("\r\n");
+
+        output.append(getBody());
+
+        return output.toString();
     }
 }
