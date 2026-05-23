@@ -25,16 +25,14 @@ public class HttpRequestParser {
         }
 
         // gets method type by getting substring to first space in info line
-        String methodStr = requestInfo.substring(0, requestInfo.indexOf(" "));
+        String methodStr = parts[0];
         HttpMethod method = getHttpMethod(methodStr);
 
         // gets filepath by getting substring from first space to "HTTP"
-        String path = requestInfo
-            .substring(requestInfo.indexOf(" "), requestInfo.indexOf("HTTP"))
-            .strip();
+        String path = parts[1];
 
         // get httpVersion
-        String httpVersion = requestInfo.substring(requestInfo.indexOf("HTTP"));
+        String httpVersion = parts[2];
 
         int endHeaderIndex = -1;
         // get all headers
@@ -47,18 +45,26 @@ public class HttpRequestParser {
             }
 
             // parse header as KEY: VALUE
-            String[] headerSplit = lineSplit[i].split(": ");
-            headers.put(headerSplit[0], headerSplit[1]);
+            int colon = lineSplit[i].indexOf(": ");
+            String key = lineSplit[i].substring(0, colon);
+            String value = lineSplit[i].substring(colon + 2);
+
+            headers.put(key, value);
         }
 
         // every line after this, if it exists, is the body
         StringBuilder body = new StringBuilder();
         if (endHeaderIndex != -1 && endHeaderIndex + 1 < lineSplit.length) {
             for (int i = endHeaderIndex + 1; i < lineSplit.length; i++) {
+                if (i > endHeaderIndex + 1) {
+                    body.append("\r\n");
+                }
+
                 body.append(lineSplit[i]);
             }
         }
 
+        // construct HttpRequest object from parsed information
         return new HttpRequest(
             method,
             path,
