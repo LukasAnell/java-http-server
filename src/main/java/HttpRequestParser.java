@@ -20,34 +20,62 @@ public class HttpRequestParser {
         // get method, path, httpVersion from the first line
         String requestInfo = lineSplit[0].strip();
 
+        String[] parts = requestInfo.split(" ");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException();
+        }
+
         // gets method type by getting substring to first space in info line
         String methodStr = requestInfo.substring(0, requestInfo.indexOf(" "));
         HttpMethod method = getHttpMethod(methodStr);
 
         // gets filepath by getting substring from first space to "HTTP"
-        String path = requestInfo.substring(
-            requestInfo.indexOf(" "),
-            requestInfo.indexOf("HTTP")
-        );
+        String path = requestInfo
+            .substring(requestInfo.indexOf(" "), requestInfo.indexOf("HTTP"))
+            .strip();
 
         // get httpVersion
         String httpVersion = requestInfo.substring(requestInfo.indexOf("HTTP"));
 
-        return null;
+        int endHeaderIndex = -1;
+        // get all headers
+        Map<String, String> headers = new HashMap<>();
+        for (int i = 1; i < lineSplit.length; i++) {
+            // end of the header section has been reached
+            if (lineSplit[i].isEmpty()) {
+                endHeaderIndex = i;
+                break;
+            }
+
+            // parse header as KEY: VALUE
+            String[] headerSplit = lineSplit[i].split(": ");
+            headers.put(headerSplit[0], headerSplit[1]);
+        }
+
+        // every line after this, if it exists, is the body
+        StringBuilder body = new StringBuilder();
+        if (endHeaderIndex != -1 && endHeaderIndex + 1 < lineSplit.length) {
+            for (int i = endHeaderIndex + 1; i < lineSplit.length; i++) {
+                body.append(lineSplit[i]);
+            }
+        }
+
+        return new HttpRequest(
+            method,
+            path,
+            headers,
+            body.toString(),
+            httpVersion
+        );
     }
 
     private static HttpMethod getHttpMethod(String methodStr) {
-        switch (methodStr.toUpperCase()) {
-            case "GET":
-                return HttpMethod.GET;
-            case "POST":
-                return HttpMethod.POST;
-            case "PUT":
-                return HttpMethod.PUT;
-            case "DELETE":
-                return HttpMethod.DELETE;
-            default:
-                return null;
-        }
+        return switch (methodStr.toUpperCase()) {
+            case "GET" -> HttpMethod.GET;
+            case "POST" -> HttpMethod.POST;
+            case "PUT" -> HttpMethod.PUT;
+            case "DELETE" -> HttpMethod.DELETE;
+            default -> throw new IllegalArgumentException();
+        };
     }
 }
