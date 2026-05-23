@@ -40,11 +40,12 @@ public class ConnectionHandler {
 
     public void sendResponse(String response) throws IOException {
         out.write(response);
+        out.flush();
     }
 
     public void close() throws IOException {
-        socket.shutdownInput();
-        socket.shutdownOutput();
+        in.close();
+        out.close();
         socket.close();
     }
 }
