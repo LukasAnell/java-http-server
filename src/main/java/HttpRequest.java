@@ -1,3 +1,4 @@
+import java.util.Collections;
 import java.util.Map;
 
 public class HttpRequest {
@@ -31,7 +32,7 @@ public class HttpRequest {
     }
 
     public Map<String, String> getHeaders() {
-        return headers;
+        return Collections.unmodifiableMap(headers);
     }
 
     public String getBody() {

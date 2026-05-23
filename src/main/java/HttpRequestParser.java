@@ -26,7 +26,7 @@ public class HttpRequestParser {
 
         // gets method type by getting substring to first space in info line
         String methodStr = parts[0];
-        HttpMethod method = getHttpMethod(methodStr);
+        HttpMethod method = HttpMethod.valueOf(methodStr.toUpperCase());
 
         // gets filepath by getting substring from first space to "HTTP"
         String path = parts[1];
@@ -72,15 +72,5 @@ public class HttpRequestParser {
             body.toString(),
             httpVersion
         );
-    }
-
-    private static HttpMethod getHttpMethod(String methodStr) {
-        return switch (methodStr.toUpperCase()) {
-            case "GET" -> HttpMethod.GET;
-            case "POST" -> HttpMethod.POST;
-            case "PUT" -> HttpMethod.PUT;
-            case "DELETE" -> HttpMethod.DELETE;
-            default -> throw new IllegalArgumentException();
-        };
     }
 }
