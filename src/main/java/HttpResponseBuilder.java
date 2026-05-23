@@ -32,6 +32,6 @@ public class HttpResponseBuilder {
     }
 
     public HttpResponse build() {
-        return new HttpResponse(status, headers, body);
+        return new HttpResponse(status, new HashMap<>(headers), body);
     }
 }

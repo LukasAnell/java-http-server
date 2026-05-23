@@ -34,7 +34,7 @@ public class HttpResponse {
 
         // response header line should be of the format:
         // httpVersion code responseStr
-        output.append(status.getCode()).append(" ").append(status.toString());
+        output.append(status.getCode()).append(" ").append(status.getReason());
 
         // append newline to end of each line
         output.append("\r\n");
@@ -45,7 +45,7 @@ public class HttpResponse {
             String key = entry.getKey();
             String value = entry.getValue();
 
-            output.append(String.format("%s: %s", key, value));
+            output.append(key).append(": ").append(value);
             output.append("\r\n");
         }
 
