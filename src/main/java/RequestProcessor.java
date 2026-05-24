@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.net.Socket;
 
 public class RequestProcessor implements Runnable {
@@ -31,7 +30,7 @@ public class RequestProcessor implements Runnable {
 
             // end connection
             handler.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
