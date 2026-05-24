@@ -40,7 +40,15 @@ public class ThreadedServer {
     }
 
     public void stop() throws IOException {
-        //
+        isStopped = true;
+
+        try {
+            // unblocks the acceptConnection() in start()
+            server.close();
+        } finally {
+            // close the thread pool once stop() is called
+            executorService.shutdown();
+        }
     }
 
     public boolean isRunning() {
