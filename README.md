@@ -128,8 +128,24 @@ Content-Length: 13\r\n
 
 ## Limitations
 
+- No HTTPS support
+- Only `GET`, `POST`, `PUT`, and `DELETE` methods are supported as of now
+- Reading the request body doesn't take `Content-Length` headers into account, which could lead to errors
+- No support for path parameters or wildcard routing (/*), paths can only be exact matches
+- No session management or cookie support
+- No protection against path traversal attacks (e.g. `../../etc/passwd`)
+- Only text-based file serving is supported (no binary files like images or PDFs)
+
 ---
 
 ## Future Updates
+
+- Add HTTPS support with `SSLServerSocket` class
+- Correctly use the `Content-Length` header when reading request bodies
+- Add path parameter routing. For example: `/users/:id`
+- Protection against path traversal attacks
+- Support binary file serving
+- Add simple session management with cookies
+- Add some kind of middleware support for logging, authentication, and error handling (not planned right now)
 
 ---
