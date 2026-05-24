@@ -1,8 +1,9 @@
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 public class FileHandler {
 
@@ -14,17 +15,13 @@ public class FileHandler {
         if (request.getMethod() != HttpMethod.GET) {
             HttpStatus status = HttpStatus.METHOD_NOT_ALLOWED;
 
-            return new HttpResponse(
-                status,
-                new HashMap<>(),
-                status.getReason()
-            );
+            return new HttpResponse(status, new HashMap<>(), "");
         }
 
         // initialize HttpResponse constructor arguments to be filled later
         HttpStatus status = HttpStatus.NOT_FOUND;
         Map<String, String> headers = new HashMap<>();
-        StringBuilder body = new StringBuilder();
+        String body;
 
         StringBuilder fullPath = new StringBuilder(rootDirectory);
         // check if request's path is /
@@ -36,7 +33,20 @@ public class FileHandler {
             fullPath.append(request.getPath());
         }
 
-        try (Scanner reader = new Scanner(new File(fullPath.toString()))) {
+        Path path = Path.of(fullPath.toString());
+
+        if (!Files.exists(path)) {
+            return new HttpResponse(
+                status,
+                new HashMap<>(),
+                status.getCode() + " " + status.getReason()
+            );
+        }
+
+        try {
+            // add lines of file to body
+            body = Files.readString(path);
+
             // change status to indicate that the file was found
             status = HttpStatus.OK;
 
@@ -46,16 +56,13 @@ public class FileHandler {
 
             long fileSize = new File(fullPath.toString()).length();
             headers.put("Content-Length", Long.toString(fileSize));
+        } catch (IOException e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-            // append each line in file to body
-            while (reader.hasNextLine()) {
-                body.append(reader.nextLine()).append("\r\n");
-            }
-        } catch (FileNotFoundException e) {
             return new HttpResponse(
                 status,
                 new HashMap<>(),
-                status.getReason()
+                status.getCode() + " " + status.getReason()
             );
         }
 
