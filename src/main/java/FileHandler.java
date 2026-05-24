@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -12,6 +13,8 @@ public class FileHandler {
         if (request.getMethod() != HttpMethod.GET) {
             return new HttpResponseBuilder()
                 .setStatus(HttpStatus.METHOD_NOT_ALLOWED)
+                .addHeader("Content-Type", "text/plain")
+                .setBody("405 Method Not Allowed")
                 .build();
         }
 
@@ -25,23 +28,27 @@ public class FileHandler {
         if (!Files.exists(path)) {
             return new HttpResponseBuilder()
                 .setStatus(HttpStatus.NOT_FOUND)
+                .addHeader("Content-Type", "text/plain")
                 .setBody("404 Not Found")
                 .build();
         }
 
         try {
-            // add lines of file to body
-            String body = Files.readString(path);
-
             // add headers for Content-Type and Content-Length
-            String mimeType = MimeTypes.getType(filePath.toString());
-            long fileSize = Files.size(path);
+            String mimeType = MimeTypes.getType(filePath);
+
+            byte[] bodyBytes = Files.readAllBytes(path);
+            String contentLength = String.valueOf(bodyBytes.length);
+
+            // add lines of file to body
+            String body = new String(bodyBytes, StandardCharsets.UTF_8);
+            body = Files.readString(path);
 
             // construct HttpResponse
             return new HttpResponseBuilder()
                 .setStatus(HttpStatus.OK)
                 .addHeader("Content-Type", mimeType)
-                .addHeader("Content-Length", Long.toString(fileSize))
+                .addHeader("Content-Length", contentLength)
                 .setBody(body)
                 .build();
         } catch (IOException e) {
