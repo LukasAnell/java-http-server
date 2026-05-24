@@ -34,15 +34,14 @@ public class FileHandler {
         }
 
         try {
+            // add lines of file to body
+            String body = Files.readString(path, StandardCharsets.UTF_8);
+
             // add headers for Content-Type and Content-Length
             String mimeType = MimeTypes.getType(filePath);
-
-            byte[] bodyBytes = Files.readAllBytes(path);
-            String contentLength = String.valueOf(bodyBytes.length);
-
-            // add lines of file to body
-            String body = new String(bodyBytes, StandardCharsets.UTF_8);
-            body = Files.readString(path);
+            String contentLength = String.valueOf(
+                body.getBytes(StandardCharsets.UTF_8).length
+            );
 
             // construct HttpResponse
             return new HttpResponseBuilder()
