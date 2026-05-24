@@ -1,9 +1,6 @@
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 public class FileHandler {
 
@@ -13,59 +10,45 @@ public class FileHandler {
     ) {
         // deny any request that's not GET
         if (request.getMethod() != HttpMethod.GET) {
-            HttpStatus status = HttpStatus.METHOD_NOT_ALLOWED;
-
-            return new HttpResponse(status, new HashMap<>(), "");
+            return new HttpResponseBuilder()
+                .setStatus(HttpStatus.METHOD_NOT_ALLOWED)
+                .build();
         }
 
-        // initialize HttpResponse constructor arguments to be filled later
-        HttpStatus status = HttpStatus.NOT_FOUND;
-        Map<String, String> headers = new HashMap<>();
-        String body;
+        // build the filepath based on whether or not / was requested
+        String filePath = request.getPath().equals("/")
+            ? "/index.html"
+            : request.getPath();
 
-        StringBuilder fullPath = new StringBuilder(rootDirectory);
-        // check if request's path is /
-        if (request.getPath().equals("/")) {
-            // desired file is /rootDirectory/index.html
-            fullPath.append("/index.html");
-        } else {
-            // getPath is the requested file
-            fullPath.append(request.getPath());
-        }
-
-        Path path = Path.of(fullPath.toString());
+        Path path = Path.of(rootDirectory, filePath);
 
         if (!Files.exists(path)) {
-            return new HttpResponse(
-                status,
-                new HashMap<>(),
-                status.getCode() + " " + status.getReason()
-            );
+            return new HttpResponseBuilder()
+                .setStatus(HttpStatus.NOT_FOUND)
+                .setBody("404 Not Found")
+                .build();
         }
 
         try {
             // add lines of file to body
-            body = Files.readString(path);
-
-            // change status to indicate that the file was found
-            status = HttpStatus.OK;
+            String body = Files.readString(path);
 
             // add headers for Content-Type and Content-Length
-            String mimeType = MimeTypes.getType(fullPath.toString());
-            headers.put("Content-Type", mimeType);
+            String mimeType = MimeTypes.getType(filePath.toString());
+            long fileSize = Files.size(path);
 
-            long fileSize = new File(fullPath.toString()).length();
-            headers.put("Content-Length", Long.toString(fileSize));
+            // construct HttpResponse
+            return new HttpResponseBuilder()
+                .setStatus(HttpStatus.OK)
+                .addHeader("Content-Type", mimeType)
+                .addHeader("Content-Length", Long.toString(fileSize))
+                .setBody(body)
+                .build();
         } catch (IOException e) {
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-
-            return new HttpResponse(
-                status,
-                new HashMap<>(),
-                status.getCode() + " " + status.getReason()
-            );
+            return new HttpResponseBuilder()
+                .setStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+                .setBody("500 Internal Server Error")
+                .build();
         }
-
-        return new HttpResponse(status, headers, body.toString());
     }
 }
