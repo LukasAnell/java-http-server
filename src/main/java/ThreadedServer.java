@@ -52,6 +52,10 @@ public class ThreadedServer {
     }
 
     public boolean isRunning() {
+        /* Make sure:
+         * 1. the server is running
+         * 2. the executor service hasn't been shut down AND it hasn't been terminated
+         */
         return (
             server.isRunning() &&
             (!executorService.isShutdown() && !executorService.isTerminated())
