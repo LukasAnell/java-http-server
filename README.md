@@ -65,9 +65,41 @@ This reposistory contains an incomplete implementation of a multithreaded HTTP/1
 
 ### With Maven
 
+**Compile sources:**
+```bash
+mvn compile
+```
+
+**Run tests:**
+```bash
+mvn test
+```
+
 ---
 
 ## HTTP Request Format
+
+The parser (HttpRequestParser) can handle standard HTTP/1.1 requests:
+
+```
+GET /index.html HTTP/1.1\r\n
+Host: localhost\r\n
+Connection: keep-alive\r\n
+\r\n
+```
+
+```
+POST /submit HTTP/1.1\r\n
+Host: localhost\r\n
+Content-Type: application/json\r\n
+Content-Length: 13\r\n
+\r\n
+{"key":"val"}
+```
+
+- The first line in the HTTP message is the request line. Format: `METHOD PATH HTTP_VERSION`
+- Every remaining line until the blank line is a header. Format: `Name: Value`
+- Everything following the blank line is the body.
 
 ---
 
