@@ -105,9 +105,24 @@ Content-Length: 13\r\n
 
 ## Supported MIME Types
 
+| Extension | MIME Type |
+|---|---|
+| `.html` | `text/html` |
+| `.css` | `text/css` |
+| `.js` | `application/javascript` |
+| `.json` | `application/json` |
+| `.txt` | `text/plain` |
+| anything else | `application/octet-stream` |
+
 ---
 
 ## Design Decisions
+
+**Difference between 404 and 405 in Router**
+
+
+**`HttpResponseBuilder` uses the builder pattern**
+
 
 ---
 
