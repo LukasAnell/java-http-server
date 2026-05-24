@@ -56,7 +56,7 @@ public class Router {
             return false;
         }
 
-        if (!routingTable.containsKey(method)) {
+        if (!routingTable.get(path).containsKey(method)) {
             return false;
         }
 
