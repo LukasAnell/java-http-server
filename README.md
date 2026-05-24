@@ -118,11 +118,11 @@ Content-Length: 13\r\n
 
 ## Design Decisions
 
-**Difference between 404 and 405 in Router**
+**Difference between 404 and 405 in Router** \
+When a request is received, the router first checks if the path exists, then if the method is registered for that path. This is used to differentiate between `404 Not Found` errors vs. `405 Method Not Allowed` errors, rather than returning a 404 error for everything unmatched.
 
-
-**`HttpResponseBuilder` uses the builder pattern**
-
+**`HttpResponseBuilder` uses the builder pattern** \
+Responses can be easily constructed using the methods in `HttpResponseBuilder` with the builder pattern. This makes it easy to build responses incrementally while only having to set the fields that will be relevant to the desired response.
 
 ---
 
