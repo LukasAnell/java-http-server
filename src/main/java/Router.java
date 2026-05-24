@@ -1,10 +1,11 @@
 import java.util.HashMap;
+import java.util.Map;
 
 public class Router {
 
     // OUTER_KEY: (INNER_KEY: VALUE)
     // filePath: HttpMethod, Handler
-    private HashMap<String, HashMap<HttpMethod, Handler>> routingTable;
+    private Map<String, Map<HttpMethod, Handler>> routingTable;
 
     public Router() {
         routingTable = new HashMap<>();
@@ -43,23 +44,14 @@ public class Router {
                 .build();
         }
 
-        // create lambda Handler
-        // calls Handler.handle() on a given HttpRequest
-        Handler handler = r -> routingTable.get(path).get(method).handle(r);
-
         // return result of handled request
-        return handler.handle(request);
+        return routingTable.get(path).get(method).handle(request);
     }
 
     public boolean hasRoute(HttpMethod method, String path) {
-        if (!routingTable.containsKey(path)) {
-            return false;
-        }
-
-        if (!routingTable.get(path).containsKey(method)) {
-            return false;
-        }
-
-        return true;
+        return (
+            routingTable.containsKey(path) &&
+            routingTable.get(path).containsKey(method)
+        );
     }
 }
