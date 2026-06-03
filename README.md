@@ -4,7 +4,7 @@
 
 ## Project Summary
 
-This reposistory contains an incomplete implementation of a multithreaded HTTP/1.1 web server in Java. My goal with this project was to handle browser requests, parse and construct HTTP messages manually, serve static files, route requests to specific handlers, and process multiple connections at once using a thread pool.
+This repository contains an incomplete implementation of a multithreaded HTTP/1.1 web server in Java. My goal with this project was to handle browser requests, parse and construct HTTP messages manually, serve static files, route requests to specific handlers, and process multiple connections at once using a thread pool.
 
 ---
 
